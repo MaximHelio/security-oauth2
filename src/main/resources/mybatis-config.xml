@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!-- underscore(ex. board_no 과 같은 sql DB에 쓰여있는 걸 )를 camelCase(Board의 선언 ex. boardNo)로 변환-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <typeAliases>
+        <!--dto를 작성, BoardMapper.xml에 Board 앞 기본 경로 -->
+        <package name="security.securitydb.domain"/>
+    </typeAliases>
+</configuration>

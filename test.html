@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>data[year]</h1>
+    <script>
+
+        // jQuery 로 AJAX 요청
+        $.ajax({
+            type        : 'POST',                    // 요청 메소드
+            url         : '/content/data',          // 요청 URL
+            data        : JSON.stringify(data),     // 요청 데이터
+            contentType : 'application/json; charset=utf-8',    // 요청 데이터 타입
+            dataType    : 'html',                               // 응답 데이터 타입
+            success     : function(response, status) {
+                // response : 응답 데이터
+                // status   : 응답 상태
+                $('#frame').html(response)
+            },
+            error       : function(xhr, status) {
+                // xhr      : XMLHttpRequest 객체
+                // status   : 응답 상태
+                alert('에러 발생')
+            }}
+        }),
+        let data: {
+            'year' : 2023,
+            'a' : 123,
+        }
+    </script>
+</body>
+</html>
