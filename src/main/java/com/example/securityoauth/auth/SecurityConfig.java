@@ -1,6 +1,8 @@
 package com.example.securityoauth.auth;
 
+import com.example.securityoauth.security.CustomLoginFailureHandler;
 import com.example.securityoauth.security.CustomLoginSuccessHandler;
+import com.example.securityoauth.service.CustomOAuth2UserService;
 import com.example.securityoauth.utils.EncodeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -26,6 +29,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -49,6 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // 폼 로그아웃 설정
         http.logout()                           // 로그아웃 URL 요청을 모두에게 허용
                 .logoutUrl("/auth/logout")               // 로그아웃 처리 URL 지정 (default: "/logout")
+                .logoutSuccessUrl("/")
                 .permitAll();
 
         // 자동 로그인 security가 만든 Controller로 체크 여부 판단하고 있음
@@ -62,6 +68,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 토큰 유효기간 설정 (초단위로)
                 .tokenValiditySeconds(60 * 60 * 24);     // 1일
 
+        // OAuth2 로그인 기능 활성화
+        http.oauth2Login()
+            .loginPage("/auth/login")
+            .successHandler( authenticationSuccessHandler() )
+            .failureHandler( authenticationFailureHandler() )
+            .userInfoEndpoint()                         // OAuth2 로그인 성공 후 사용자 정보 설정
+            .userService(customOAuth2UserService)       // 로그인 성공 후 처리할 서비스 설정
+            ;
+        ;
 
         // SSL 비활성화
         // http.csrf().disable();                  // 시큐리티가 CSRF 공격에 대한 보호 설정을 기본으로 해줌, 403에러 막음
@@ -109,6 +124,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler(){
         return new CustomLoginSuccessHandler();
+    }
+
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new CustomLoginFailureHandler();
     }
 
     // 인증 관리자 클래스 - 빈 등록

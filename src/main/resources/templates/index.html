@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>메인</title>
+</head>
+<body>
+<h1>SPRING SECURITY</h1>
+<h3>로그인 & 회원가입</h3>
+
+<!-- 비인증 - 로그인 버튼 -->
+<!-- isAnonymous() : 인증되지 않은 사용자면 true, 아니면 false -->
+<th:block sec:authorize="isAnonymous()">
+    <button type="button" onclick="location.href='/auth/login'">로그인</button>
+    <button type="button" onclick="location.href='/user/join'">회원가입</button>
+</th:block>
+
+<!-- 인증 - 로그아웃 버튼 -->
+<!-- isAuthenticated() : 인증된 사용자면 true, 아니면 false -->
+<th:block sec:authorize="isAuthenticated()">
+    <form action="/auth/logout" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <!-- principal : 인증된 사용자 정보 객체 -->
+        <span sec:authentication="principal.username"></span>
+
+        <!--
+        <img th:src="${profile_image}" />
+        -->
+        <img th:src="${thumbnail_image}" />
+
+        <button type="submit">로그아웃</button>
+    </form>
+</th:block>
+
+
+
+</body>
+</html>
